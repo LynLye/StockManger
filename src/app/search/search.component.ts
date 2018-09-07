@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 import { Stock } from '../stock';
 import { StocksService } from '../stocks.service';
+
 import { OHLC, SearchService } from '../search.service';
 import { MultipleService} from '../multiple.service';
 @Component({
@@ -17,25 +18,23 @@ export class SearchComponent implements OnInit {
   pushStock: Stock = new Stock;
   _stocks:  Stock[];
 
-  constructor( private multipleService: MultipleService
-  // private stocksService: StocksService,
-  // private searchService: SearchService
-  ) { }
+  constructor( private stocksService: StocksService,
+    private searchService: SearchService) { }
 
   ngOnInit() {
   }
 
   getResult(stock: string) {
     this.pushStock = { cmp: stock };
-    this._stocks = this.multipleService.getStocks();
-    this.multipleService.getOHLC(stock).subscribe(
+    this._stocks = this.stocksService.getStocks();
+    this.searchService.getOHLC(stock).subscribe(
       resp => {
         {
           this.result = resp;
-          this.multipleService.addStocks(this.pushStock);
+          this.searchService.addStocks(this.pushStock);
         }
       });
-    if ( this.multipleService.getStocks() === this._stocks) {
+    if ( this.stocksService.getStocks() === this._stocks) {
       this.result = {open: {
         price: 0,
         time: 0,
@@ -47,6 +46,6 @@ export class SearchComponent implements OnInit {
       high: 0,
       low: 0,
       }; }
-    this.stocks = this.multipleService.getStocks();
+    this.stocks = this.stocksService.getStocks();
   }
 }
